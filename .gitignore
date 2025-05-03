@@ -1,8 +1,8 @@
 # === Основные файлы и папки ===
 # Скомпилированные контракты и артефакты
-/build/
-/artifacts/
-/cache/
+*/build/
+*/artifacts/
+*/cache/
 
 # Логи и временные файлы
 *.log
@@ -46,16 +46,16 @@ __pycache__/
 
 # === Truffle ===
 # Сгенерированные файлы при миграции
-/build/contracts/
-/abis/
-/deployments/
+*/build/contracts/
+*/abis/
+*/deployments/
 
 # === Frontend (React, Vue, etc.) ===
 # Сборки frontend
-/dist/
-/public/build/
-/build/
-/node_modules/
+*/dist/
+*/public/build/
+*/build/
+*/node_modules/
 
 # === OS-specific files ===
 # macOS
