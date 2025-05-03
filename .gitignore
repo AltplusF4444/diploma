@@ -1,0 +1,83 @@
+# === Основные файлы и папки ===
+# Скомпилированные контракты и артефакты
+/build/
+/artifacts/
+/cache/
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
+
+# Файлы IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# === Docker ===
+# Временные тома Docker
+volumes/
+.docker-compose.override.yml
+docker-compose.override.yml
+
+# Кэш и логи Docker
+.docker/
+docker.sock
+
+# === Node.js и npm ===
+node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+
+# === Python ===
+# Виртуальные окружения Python
+venv/
+env/
+.venv/
+ENV/
+
+# Кэш pip
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === Truffle ===
+# Сгенерированные файлы при миграции
+/build/contracts/
+/abis/
+/deployments/
+
+# === Frontend (React, Vue, etc.) ===
+# Сборки frontend
+/dist/
+/public/build/
+/build/
+/node_modules/
+
+# === OS-specific files ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# === Другие ===
+# Локальные конфигурации
+.env
+.env.local
+.env.development
+.env.production
+
+# Файлы, созданные случайно
+*~
+.#*
