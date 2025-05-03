@@ -54,7 +54,6 @@ __pycache__/
 # Сборки frontend
 */dist/
 */public/build/
-*/build/
 */node_modules/
 
 # === OS-specific files ===
@@ -79,5 +78,4 @@ Desktop.ini
 .env.production
 
 # Файлы, созданные случайно
-*~
 .#*
