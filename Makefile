@@ -5,6 +5,7 @@ PROJECT_NAME := decentralized-blog
 DOCKER_COMPOSE := docker-compose
 BUILD_DIR := ./blockchain/build
 SHARED_ABI_PATH = /shared/abi.json
+SHARED_ADDRESS_PATH = /shared/contract_address.txt
 BLOG_JSON_PATH = /app/build/contracts/Blog.json
 
 ## Цели (Targets)
@@ -41,7 +42,11 @@ clean:
 migrate:
 	@echo "Выполнение миграции смарт-контрактов..."
 	$(DOCKER_COMPOSE) exec blockchain truffle migrate --network ganache
-	$(DOCKER_COMPOSE) exec blockchain cp $(BLOG_JSON_PATH) $(SHARED_ABI_PATH)
+	$(DOCKER_COMPOSE) exec blockchain ./copy_abi.sh
+
+check-artifacts:
+	$(DOCKER_COMPOSE) exec backend bash -c "cat $(SHARED_ABI_PATH)"
+	$(DOCKER_COMPOSE) exec backend bash -c "cat $(SHARED_ADDRESS_PATH)"
 
 # Открыть Truffle Console для взаимодействия с контрактами
 console:

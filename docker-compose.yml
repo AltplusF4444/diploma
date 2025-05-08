@@ -10,8 +10,8 @@ services:
 
   backend:
     build: ./backend
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     depends_on:
       - blockchain
     volumes:
@@ -20,12 +20,29 @@ services:
       - WEB3_PROVIDER=http://blockchain:8545
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:5000
+    command: npm start
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - frontend_build:/usr/share/nginx/html
     depends_on:
+      - frontend
       - backend
 
 volumes:
   blockchain_data:
   shared_abi:
+  frontend_build:

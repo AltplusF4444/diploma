@@ -12,11 +12,12 @@ with open('/shared/abi.json', 'r') as f:
     contract_abi = json.load(f)["abi"]
 
 # Адрес контракта
-contract_address = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+with open('/shared/contract_address.txt', 'r') as f:
+    contract_address = f.read().strip()
 
 # Создание экземпляра контракта
 contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-print(contract_abi)
+
 
 @app.route('/posts', methods=['GET'])
 def get_posts():
@@ -31,6 +32,23 @@ def get_posts():
             'likes': post[3]
         })
     return jsonify(posts)
+
+
+@app.route('/abi', methods=['GET'])
+def get_abi():
+    with open('/shared/abi.json', 'r') as f:
+        abi = json.load(f)
+    print(jsonify(abi))
+    return jsonify(abi)
+
+
+@app.route('/address', methods=['GET'])
+def get_address():
+    with open('/shared/contract_address.txt', 'r') as f:
+        address = f.read().strip()
+    print(address)
+    return address
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

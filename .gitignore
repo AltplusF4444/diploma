@@ -79,3 +79,4 @@ Desktop.ini
 
 # Файлы, созданные случайно
 .#*
+/blockchain/build/
