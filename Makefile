@@ -33,10 +33,8 @@ rebuild:
 
 # Очистить все неиспользуемые Docker-ресурсы
 clean:
-	@echo "Очистка Docker-ресурсов..."
-	docker system prune -a -f
-	docker builder prune --all -f
-	rm -rf $(BUILD_DIR)
+	@echo "Очистка blockchain ресурсов..."
+	$(DOCKER_COMPOSE) exec blockchain rm -rf /app/build/* /app/share/*
 
 # Выполнить миграцию смарт-контрактов
 migrate:

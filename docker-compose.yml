@@ -5,7 +5,7 @@ services:
     ports:
       - "8545:8545"
     volumes:
-      - blockchain_data:/app/build
+      - ./blockchain:/app
       - shared_abi:/shared
 
   backend:
@@ -15,6 +15,7 @@ services:
     depends_on:
       - blockchain
     volumes:
+      - ./backend:/app
       - shared_abi:/shared
     environment:
       - WEB3_PROVIDER=http://blockchain:8545
@@ -43,6 +44,5 @@ services:
       - backend
 
 volumes:
-  blockchain_data:
   shared_abi:
   frontend_build:

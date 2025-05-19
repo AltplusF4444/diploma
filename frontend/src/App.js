@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
-import { fetchAbi, fetchAddress } from "./utils/loadAbi";
+import React, {useEffect, useState} from "react";
+import {ethers} from "ethers";
+import {fetchAbi, fetchAddress} from "./utils/loadAbi";
 import "./App.css"; // Импортируем стили
 
 function App() {
@@ -8,8 +8,9 @@ function App() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [contract, setContract] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [likedPosts, setLikedPosts] = useState({});
 
-  // Загрузка постов из контракта
   const loadPosts = async () => {
     if (!contract) return;
 
@@ -17,13 +18,14 @@ function App() {
       setLoading(true);
       const postCount = await contract.getPostCount();
       const postsArray = [];
-      console.log(postCount);
+      const likedStatus = {};
       for (let i = 0; i < postCount; i++) {
         const post = await contract.posts(i);
         postsArray.push(post);
+        likedStatus[i] = await contract.liked(i, signer.getAddress());
       }
       setPosts(postsArray);
-      console.log(postsArray);
+      setLikedPosts(likedStatus);
       setLoading(false);
     } catch (error) {
       console.error("Ошибка при загрузке постов:", error);
@@ -31,19 +33,18 @@ function App() {
     }
   };
 
-  // Подключение к MetaMask
   useEffect(() => {
     const connectMetaMask = async () => {
       if (window.ethereum) {
         try {
           await window.ethereum.request({ method: "eth_requestAccounts" });
           const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
+          const providerSigner = provider.getSigner();
+          setSigner(providerSigner)
           const address = await fetchAddress();
           const abi = await fetchAbi();
-          const initializedContract = new ethers.Contract(address, abi, signer);
+          const initializedContract = new ethers.Contract(address, abi, providerSigner);
           setContract(initializedContract);
-          await loadPosts();
         } catch (error) {
           console.error("Ошибка при подключении к MetaMask:", error);
         }
@@ -55,7 +56,13 @@ function App() {
     connectMetaMask();
   }, []);
 
-  // Создание нового поста
+  useEffect(() => {
+    if (contract && signer) {
+      console.log("Контракт готов, загружаем посты...");
+      loadPosts();
+    }
+  }, [contract]);
+
   const createPost = async () => {
     if (!contract) return;
 
@@ -71,20 +78,29 @@ function App() {
     }
   };
 
-  // Лайк поста
-  const likePost = async (postId) => {
-    if (!contract) return;
+  const handleLikeUnlike = async (postId) => {
+  if (!contract) {
+    console.error("Контракт не инициализирован");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
+
+    if (likedPosts[postId]) {
+      const tx = await contract.unlikePost(postId);
+      await tx.wait();
+    } else {
       const tx = await contract.likePost(postId);
       await tx.wait();
-      await loadPosts();
-    } catch (error) {
-      console.error("Ошибка при лайке поста:", error);
-      setLoading(false);
     }
-  };
+
+    await loadPosts();
+  } catch (error) {
+    console.error("Ошибка при обработке лайка/снятия лайка:", error);
+    setLoading(false);
+  }
+};
 
   return (
     <div className="App">
@@ -105,7 +121,6 @@ function App() {
         </button>
       </div>
 
-      {/* Список постов */}
       <div className="post-list">
         <h2>Посты:</h2>
         {loading ? (
@@ -125,10 +140,10 @@ function App() {
                 <strong>Лайки:</strong> {post.likes.toString()}
               </p>
               <button
-                onClick={() => likePost(post.id.toNumber())}
-                disabled={loading || !contract}
+                  onClick={() => handleLikeUnlike(index)}
+                  disabled={loading || !contract}
               >
-                Лайк
+                {likedPosts[index] ? "💔" : "❤️"}
               </button>
             </div>
           ))
